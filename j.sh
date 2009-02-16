@@ -9,8 +9,7 @@
 # USE:
 # j [--l] [mask1 ... maskn]
 #   mask1 ... maskn       jump to the most used directory matching all masks
-#   --l                   show the contents of the list
-#   --l mask1 ... maskn   show dirs that match all masks
+#   --l                   show the contents of the list instead of jumping
 
 j() {
  jfile=$HOME/.j
