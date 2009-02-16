@@ -33,4 +33,4 @@ j() {
   [ "$cd" ] && cd "$cd"
  fi
 }
-PROMPT_COMMAND='history -n;history -a;j --add "$(pwd -P)";'"$PROMPT_COMMAND"
+PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
