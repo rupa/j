@@ -29,7 +29,7 @@ j() {
   cd=$(awk -v r="$*" -F"|" '
    BEGIN { split(r,a," ") }
    { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
-  ' $jfile | sort -nr | cut -f 2 | head -n 1)
+  ' $jfile | sort -nr | head -n 1 | cut -f 2)
   [ "$cd" ] && cd $cd
  fi
 }
