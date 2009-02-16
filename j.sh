@@ -30,7 +30,7 @@ j() {
    BEGIN { split(r,a," ") }
    { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile | sort -nr | head -n 1 | cut -f 2)
-  [ "$cd" ] && cd $cd
+  [ "$cd" ] && cd "$cd"
  fi
 }
 PROMPT_COMMAND='history -n;history -a;j --add "$(pwd -P)";'"$PROMPT_COMMAND"
