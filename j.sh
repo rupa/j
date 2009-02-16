@@ -1,9 +1,9 @@
 # jump-list of directories
 # source into .bashrc
-# use: j [mask1] ... [maskn]
+# j [--l] [mask1] ... [maskn]
 j() {
  jfile=$HOME/.j
- [ "$1" = "--add" ] && {
+ if [ "$1" = "--add" ]; then
   shift
   awk -v d="$*" -v mx=1000 -F"|" '
    $2 >= 1 { 
@@ -19,26 +19,18 @@ j() {
   ' $jfile 2>/dev/null > $jfile.tmp
   mv $jfile.tmp $jfile
   return
- }
- local IFS='
-'
- set -- $(awk -v r="$*" -F"|" '
-  BEGIN { split(r,a," ") }
-  { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
- ' $jfile | sort -nr | cut --complement -f 1)
- if [ $# -eq 0 ]; then
-  return
- elif [ $# -eq 1 ]; then
-  cd "$1"
+ elif [ "$1" == "--l" ];then
+  shift
+  awk -v r="$*" -F"|" '
+   BEGIN { split(r,a," ") }
+   { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
+  ' $jfile | sort -nr
  else
-  for x in "$@"; do
-   echo $x
-  done | nl -n ln
-  echo -n "Number: "
-  read C
-  [ "$C" = "0" -o -z "$C" ] && return
-  eval D="\${$C}" 2>/dev/null
-  [ "$D" ] && cd "$D"
+  cd=$(awk -v r="$*" -F"|" '
+   BEGIN { split(r,a," ") }
+   { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
+  ' $jfile | sort -nr | cut --complement -f 1 | head -n 1)
+  [ "$cd" ] && cd $cd
  fi
 }
-PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
+PROMPT_COMMAND='history -n;history -a;j --add "$(pwd -P)";'"$PROMPT_COMMAND"
