@@ -1,6 +1,15 @@
-# jump-list of directories
+# maintains a jump-list of directories you use
+# old/unused directories eventually fall off the list
+# 
+# INSTALL:
 # source into .bashrc under your '[-z "$PS1" ] || return' line
-# j [--l] [mask1] ... [maskn]
+# cd around for a while
+#
+# USE:
+# j [--l] [mask1 ... maskn]
+#   mask1 ... maskn       jump to the most used directory matching all masks
+#   --l                   show the contents of the list
+#   --l mask1 ... maskn   show dirs that match all masks
 j() {
  jfile=$HOME/.j
  if [ "$1" = "--add" ]; then
