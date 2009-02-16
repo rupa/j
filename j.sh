@@ -10,7 +10,6 @@
 # j [--l] [mask1 ... maskn]
 #   mask1 ... maskn       jump to the most used directory matching all masks
 #   --l                   show the contents of the list instead of jumping
-
 j() {
  jfile=$HOME/.j
  if [ "$1" = "--add" ]; then
@@ -43,5 +42,5 @@ j() {
   [ "$cd" ] && cd "$cd"
  fi
 }
-
+# prepend to PROMPT_COMMAND
 PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
