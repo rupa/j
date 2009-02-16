@@ -1,5 +1,6 @@
 # maintains a jump-list of directories you use
 # old/unused directories eventually fall off the list
+# inspired by http://wiki.github.com/joelthelion/autojump
 # 
 # INSTALL:
 # source into .bashrc under your '[-z "$PS1" ] || return' line
