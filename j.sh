@@ -1,5 +1,5 @@
 # jump-list of directories
-# source into .bashrc
+# source into .bashrc under your '[-z "$PS1" ] || return' line
 # j [--l] [mask1] ... [maskn]
 j() {
  jfile=$HOME/.j
