@@ -27,7 +27,6 @@ j() {
    }
   ' $jfile 2>/dev/null > $jfile.tmp
   mv $jfile.tmp $jfile
-  return
  elif [ "$1" == "--l" ];then
   shift
   awk -v r="$*" -F"|" '
