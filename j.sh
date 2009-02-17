@@ -8,8 +8,8 @@
 #   cd around for a while
 #
 # USE:
-#   j [--l] [mask1 ... maskn]
-#     mask1 ... maskn   jump to the most used directory matching all masks
+#   j [--l] [regex1 ... regexn]
+#     regex1 ... regexn jump to the most used directory matching all masks
 #     --l               show the list instead of jumping
 j() {
  # change jfile if you already have a .j file for something else
