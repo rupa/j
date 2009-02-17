@@ -1,43 +1,46 @@
-# maintains a jump-list of directories you use
-# old/unused directories eventually fall off the list
+# maintains a jump-list of directories you actually use
+# old directories eventually fall off the list
 # inspired by http://wiki.github.com/joelthelion/autojump
-# and a try i had made at this where i could never get the dir list right.
-# 
+# and something similar i had - but i could never get the dir list right.
+#
 # INSTALL:
-# source into .bashrc under your '[-z "$PS1" ] || return' line
-# cd around for a while
+#   source into .bashrc under your '[-z "$PS1" ] || return' line
+#   cd around for a while
 #
 # USE:
-# j [--l] [mask1 ... maskn]
-#   mask1 ... maskn       jump to the most used directory matching all masks
-#   --l                   show the contents of the list instead of jumping
+#   j [--l] [mask1 ... maskn]
+#     mask1 ... maskn   jump to the most used directory matching all masks
+#     --l               show the list instead of jumping
 j() {
+ # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
  if [ "$1" = "--add" ]; then
   shift
-  awk -v d="$*" -v mx=1000 -F"|" '
+  # we're in $HOME all the time, let something else get all the good letters
+  [ "$*" = "$HOME" ] && return
+  awk -v q="$*" -v mx=1000 -F"|" '
    $2 >= 1 { 
-    if( $1 == d ) { l[$1] = $2 + 1; x = 1 } else l[$1] = $2
+    if( $1 == q ) { l[$1] = $2 + 1; x = 1 } else l[$1] = $2
     y += $2
    }
    END {
-    if( !x ) l[d] = 1
+    x || l[q] = 1
     if( y > mx ) {
-     for( i in l ) print i "|" l[i]*(0.9*mx/y)
+     for( i in l ) print i "|" l[i]*(0.9*mx/y) # aging
     } else for( i in l ) print i "|" l[i]
    }
   ' $jfile 2>/dev/null > $jfile.tmp
   mv $jfile.tmp $jfile
  elif [ "$1" = "--l" ];then
   shift
-  awk -v r="$*" -F"|" '
-   BEGIN { split(r,a," ") }
-   { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
+  awk -v q="$*" -F"|" '
+   BEGIN { split(q,a," ") }
+   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile | sort -nr
  else
-  cd=$(awk -v r="$*" -F"|" '
-   BEGIN { split(r,a," ") }
-   { for( o in a ) if( $1 !~ a[o] ) $1 = ""; if( $1 ) print $2 "\t" $1 }
+  cd=$(awk -v q="$*" -F"|" '
+   BEGIN { split(q,a," ") }
+   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile | sort -nr | head -n 1 | cut -f 2)
   [ "$cd" ] && cd "$cd"
  fi
