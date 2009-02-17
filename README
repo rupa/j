@@ -1,0 +1,14 @@
+maintains a jump-list of directories you actually use
+old directories eventually fall off the list
+inspired by http://wiki.github.com/joelthelion/autojump
+and something similar i had - but i could never get the dir list right.
+
+INSTALL:
+  source into .bashrc under your '[-z "$PS1" ] || return' line
+  cd around for a while
+
+USE:
+  j [--l] [regex1 ... regexn]
+    regex1 ... regexn jump to the most used directory matching all masks
+    --l               show the list instead of jumping
+                      with no args, returns full list
