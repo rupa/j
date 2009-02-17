@@ -11,6 +11,7 @@
 #   j [--l] [regex1 ... regexn]
 #     regex1 ... regexn jump to the most used directory matching all masks
 #     --l               show the list instead of jumping
+#                       with no args, returns full list
 j() {
  # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
@@ -31,21 +32,21 @@ j() {
    }
   ' $jfile 2>/dev/null > $jfile.tmp
   mv $jfile.tmp $jfile
- elif [ "$1" = "--l" ];then
+ elif [ "$1" = "" -o "$1" = "--l" ];then
   shift
   awk -v q="$*" -F"|" '
    BEGIN { split(q,a," ") }
    { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
-  ' $jfile | sort -n
+  ' $jfile 2>/dev/null | sort -n
  # for completion
  elif [ "$1" = "--complete" ];then
   awk -v q="$3" -F"|" '
    BEGIN { split(q,a," ") }
    { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $1 }
-  ' $jfile
+  ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there
  elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
-  cd "$*"
+  cd "$*" 
  else
   # prefer case sensitive
   cd=$(awk -v q="$*" -F"|" '
@@ -59,7 +60,7 @@ j() {
      if( $1 ) print $2 "\t" $1
     }
    }
-  ' $jfile | sort -nr | head -n 1 | cut -f 2)
+  ' $jfile 2>/dev/null | sort -nr | head -n 1 | cut -f 2)
   [ "$cd" ] && cd "$cd"
  fi
 }
