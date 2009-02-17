@@ -36,7 +36,7 @@ j() {
   awk -v q="$*" -F"|" '
    BEGIN { split(q,a," ") }
    { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
-  ' $jfile | sort -nr
+  ' $jfile | sort -n
  # for completion
  elif [ "$1" = "--complete" ];then
   awk -v q="$3" -F"|" '
