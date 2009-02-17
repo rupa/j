@@ -37,11 +37,13 @@ j() {
    BEGIN { split(q,a," ") }
    { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile | sort -nr
+ # for completion
  elif [ "$1" = "--complete" ];then
   awk -v q="$3" -F"|" '
    BEGIN { split(q,a," ") }
    { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $1 }
   ' $jfile
+ # if we hit enter on a completion just go there
  elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
   cd "$*"
  else
