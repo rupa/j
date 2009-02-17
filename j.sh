@@ -47,9 +47,18 @@ j() {
  elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
   cd "$*"
  else
+  # prefer case sensitive
   cd=$(awk -v q="$*" -F"|" '
    BEGIN { split(q,a," ") }
-   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
+   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) { print $2 "\t" $1; x = 1 } }
+   END {
+    if( x ) exit
+    close(FILENAME)
+    while( getline < FILENAME ) {
+     for( o in a ) tolower($1) !~ tolower(a[o]) && $1 = ""
+     if( $1 ) print $2 "\t" $1
+    }
+   }
   ' $jfile | sort -nr | head -n 1 | cut -f 2)
   [ "$cd" ] && cd "$cd"
  fi
