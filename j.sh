@@ -27,7 +27,7 @@ j() {
    }
   ' $jfile 2>/dev/null > $jfile.tmp
   mv $jfile.tmp $jfile
- elif [ "$1" == "--l" ];then
+ elif [ "$1" = "--l" ];then
   shift
   awk -v r="$*" -F"|" '
    BEGIN { split(r,a," ") }
