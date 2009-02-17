@@ -37,6 +37,13 @@ j() {
    BEGIN { split(q,a," ") }
    { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile | sort -nr
+ elif [ "$1" = "--complete" ];then
+  awk -v q="$3" -F"|" '
+   BEGIN { split(q,a," ") }
+   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $1 }
+  ' $jfile
+ elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
+  cd "$*"
  else
   cd=$(awk -v q="$*" -F"|" '
    BEGIN { split(q,a," ") }
@@ -47,3 +54,5 @@ j() {
 }
 # prepend to PROMPT_COMMAND
 PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
+# bash completions for j
+complete -o dirnames -o filenames -C "j --complete" j
