@@ -1,6 +1,6 @@
 maintains a jump-list of directories you actually use
 old directories eventually fall off the list
-inspired by http://wiki.github.com/joelthelion/autojump
+inspired by Joel Schaerer's http://wiki.github.com/joelthelion/autojump
 and something similar i had - but i could never get the dir list right.
 
 INSTALL:
