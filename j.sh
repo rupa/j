@@ -15,6 +15,7 @@
 j() {
  # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
+ echo $* >> /home/rupa/aargh
  if [ "$1" = "--add" ]; then
   shift
   # we're in $HOME all the time, let something else get all the good letters
@@ -42,7 +43,7 @@ j() {
  elif [ "$1" = "--complete" ];then
   awk -v q="$2" -F"|" '
    BEGIN { split(substr(q,3),a," ") }
-   { for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""; if( $1 ) print $1 }
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1 }
   ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there (ugh, this is ugly)
  elif [[ "$*" =~ "/" ]]; then
