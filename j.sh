@@ -15,7 +15,6 @@
 j() {
  # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
- echo $* >> /home/rupa/aargh
  if [ "$1" = "--add" ]; then
   shift
   # we're in $HOME all the time, let something else get all the good letters
