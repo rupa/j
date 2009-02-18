@@ -19,15 +19,15 @@ j() {
   shift
   # we're in $HOME all the time, let something else get all the good letters
   [ "$*" = "$HOME" ] && return
-  awk -v q="$*" -v mx=1000 -F"|" '
+  awk -v q="$*" -F"|" '
    $2 >= 1 { 
     if( $1 == q ) { l[$1] = $2 + 1; x = 1 } else l[$1] = $2
     y += $2
    }
    END {
     x || l[q] = 1
-    if( y > mx ) {
-     for( i in l ) print i "|" l[i]*(0.9*mx/y) # aging
+    if( y > 1000 ) {
+     for( i in l ) print i "|" 0.9*l[i] # aging
     } else for( i in l ) print i "|" l[i]
    }
   ' $jfile 2>/dev/null > $jfile.tmp
