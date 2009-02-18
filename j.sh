@@ -40,9 +40,9 @@ j() {
   ' $jfile 2>/dev/null | sort -n
  # for completion
  elif [ "$1" = "--complete" ];then
-  awk -v q="$3" -F"|" '
-   BEGIN { split(q,a," ") }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1 }
+  awk -v q="$2" -F"|" '
+   BEGIN { split(substr(q,3),a," ") }
+   { for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""; if( $1 ) print $1 }
   ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there
  elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
@@ -64,7 +64,7 @@ j() {
   [ "$cd" ] && cd "$cd"
  fi
 }
+# bash completions for j
+complete -o dirnames -C 'j --complete "$COMP_LINE"' j
 # prepend to PROMPT_COMMAND
 PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
-# bash completions for j
-complete -o dirnames -o filenames -C "j --complete" j
