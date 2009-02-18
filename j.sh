@@ -15,6 +15,7 @@
 j() {
  # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
+ echo $* >> /home/rupa/aargh
  if [ "$1" = "--add" ]; then
   shift
   # we're in $HOME all the time, let something else get all the good letters
@@ -44,9 +45,11 @@ j() {
    BEGIN { split(substr(q,3),a," ") }
    { for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""; if( $1 ) print $1 }
   ' $jfile 2>/dev/null
- # if we hit enter on a completion just go there
- elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
-  cd "$*" 
+ # if we hit enter on a completion just go there (ugh, this is ugly)
+ elif [[ "$*" =~ "/" ]]; then
+  x=$*
+  x=/${x#*/}
+  [ -d "$x" ] && cd "$x"
  else
   # prefer case sensitive
   cd=$(awk -v q="$*" -F"|" '
@@ -65,6 +68,6 @@ j() {
  fi
 }
 # bash completions for j
-complete -o dirnames -C 'j --complete "$COMP_LINE"' j
+complete -C 'j --complete "$COMP_LINE"' j
 # prepend to PROMPT_COMMAND
 PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
