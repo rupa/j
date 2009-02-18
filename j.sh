@@ -1,6 +1,6 @@
 # maintains a jump-list of directories you actually use
 # old directories eventually fall off the list
-# inspired by http://wiki.github.com/joelthelion/autojump
+# inspired by Joel Schaerer's http://wiki.github.com/joelthelion/autojump
 # and something similar i had - but i could never get the dir list right.
 #
 # INSTALL:
@@ -21,12 +21,12 @@ j() {
   [ "$*" = "$HOME" ] && return
   awk -v q="$*" -F"|" '
    $2 >= 1 { 
-    if( $1 == q ) { l[$1] = $2 + 1; x = 1 } else l[$1] = $2
-    y += $2
+    if( $1 == q ) { l[$1] = $2 + 1; found = 1 } else l[$1] = $2
+    count += $2
    }
    END {
-    x || l[q] = 1
-    if( y > 1000 ) {
+    found || l[q] = 1
+    if( count > 1000 ) {
      for( i in l ) print i "|" 0.9*l[i] # aging
     } else for( i in l ) print i "|" l[i]
    }
@@ -36,13 +36,13 @@ j() {
   shift
   awk -v q="$*" -F"|" '
    BEGIN { split(q,a," ") }
-   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $2 "\t" $1 }
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile 2>/dev/null | sort -n
  # for completion
  elif [ "$1" = "--complete" ];then
   awk -v q="$3" -F"|" '
    BEGIN { split(q,a," ") }
-   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) print $1 }
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1 }
   ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there
  elif [ "${1:0:1}" = "/" -a -d "$*" ]; then
@@ -51,12 +51,12 @@ j() {
   # prefer case sensitive
   cd=$(awk -v q="$*" -F"|" '
    BEGIN { split(q,a," ") }
-   { for( o in a ) $1 !~ a[o] && $1 = ""; if( $1 ) { print $2 "\t" $1; x = 1 } }
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) { print $2 "\t" $1; x = 1 } }
    END {
     if( x ) exit
     close(FILENAME)
     while( getline < FILENAME ) {
-     for( o in a ) tolower($1) !~ tolower(a[o]) && $1 = ""
+     for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""
      if( $1 ) print $2 "\t" $1
     }
    }
