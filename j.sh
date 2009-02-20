@@ -8,10 +8,12 @@
 #   cd around for a while
 #
 # USE:
-#   j [--l] [regex1 ... regexn]
+#   j [--r | --l | --lr] [regex1 ... regexn]
 #     regex1 ... regexn jump to the most used directory matching all masks
+#     --r               order by recently used instead of most used
 #     --l               show the list instead of jumping
-#                       with no args, returns full list
+#     --lr              show the list, ordered by recently used
+#                       with no args, returns full list (same as j --l)
 j() {
  # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
@@ -19,18 +21,25 @@ j() {
   shift
   # we're in $HOME all the time, let something else get all the good letters
   [ "$*" = "$HOME" ] && return
-  awk -v q="$*" -F"|" '
+  awk -v q="$*" -v t="$(date +%s)" -F"|" '
    $2 >= 1 { 
-    if( $1 == q ) { l[$1] = $2 + 1; found = 1 } else l[$1] = $2
-    count += $2
+    if( $1 == q ) {
+     l[$1] = $2 + 1
+     d[$1] = t
+     found = 1
+    } else {
+     l[$1] = $2
+     d[$1] = $3
+     count += $2
+    }
    }
    END {
-    found || l[q] = 1
+    if( !found ) l[q] = 1 && d[q] = t
     if( count > 1000 ) {
-     for( i in l ) print i "|" 0.9*l[i] # aging
-    } else for( i in l ) print i "|" l[i]
+     for( i in l ) print i "|" 0.9*l[i] "|" d[i] # aging
+    } else for( i in l ) print i "|" l[i] "|" d[i]
    }
-  ' $jfile 2>/dev/null > $jfile.tmp
+  ' $jfile > $jfile.tmp
   mv -f $jfile.tmp $jfile
  elif [ "$1" = "" -o "$1" = "--l" ];then
   shift
@@ -38,10 +47,23 @@ j() {
    BEGIN { split(q,a," ") }
    { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $2 "\t" $1 }
   ' $jfile 2>/dev/null | sort -n
+ # recently used
+ elif [ "$1" = "--lr" ];then
+  shift
+  awk -v q="$*" -F"|" '
+   BEGIN { split(q,a," ") }
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $3 "\t" $1 }
+  ' $jfile 2>/dev/null | sort -n
  # for completion
- elif [ "$1" = "--complete" ];then
+ elif [ "$1" = "--complete" -o "$2" = "--complete" ];then
+  echo [$*][$2] >> /home/rupa/aargh
   awk -v q="$2" -F"|" '
-   BEGIN { split(substr(q,3),a," ") }
+   BEGIN {
+    if( substr(q,1,5) == "j --r" ) {
+     split(substr(q,7),a," ")
+    } else split(substr(q,3),a," ")
+    for( i in a ) print i, a[i] >> "/home/rupa/aargh"
+   }
    { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1 }
   ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there (ugh, this is ugly)
@@ -52,14 +74,22 @@ j() {
  else
   # prefer case sensitive
   cd=$(awk -v q="$*" -F"|" '
-   BEGIN { split(q,a," ") }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) { print $2 "\t" $1; x = 1 } }
+   BEGIN { 
+    if( substr(q,1,3) == "--r" ) {
+     split(substr(q,5),a," ")
+     f = 3
+    } else {
+     split(q,a," ")
+     f = 2
+    }
+   }
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) { print $f "\t" $1; x = 1 } }
    END {
     if( x ) exit
     close(FILENAME)
     while( getline < FILENAME ) {
      for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""
-     if( $1 ) print $2 "\t" $1
+     if( $1 ) print $f "\t" $1
     }
    }
   ' $jfile 2>/dev/null | sort -nr | head -n 1 | cut -f 2)
