@@ -8,11 +8,10 @@
 #   cd around for a while
 #
 # USE:
-#   j [--r | --l | --lr] [regex1 ... regexn]
+#   j [--h[elp]] [--l ] [--r] [regex1 ... regexn]
 #     regex1 ... regexn jump to the most used directory matching all masks
-#     --r               order by recently used instead of most used
 #     --l               show the list instead of jumping
-#     --lr              show the list, ordered by recently used
+#     --r               order by recently used instead of most used
 #                       with no args, returns full list (same as j --l)
 j() {
  # change jfile if you already have a .j file for something else
@@ -41,22 +40,28 @@ j() {
    }
   ' $jfile 2>/dev/null > $jfile.tmp
   mv -f $jfile.tmp $jfile
+ elif [ "$1" = "--h" -o "$1" = "--help" ]; then
+  echo "j [--h] [--l ] [--r] [regex1 ... regexn]"
  elif [ "$1" = "" -o "$1" = "--l" ];then
   shift
-  awk -v q="$*" -F"|" '
-   BEGIN { split(q,a," ") }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $2 "\t" $1 }
-  ' $jfile 2>/dev/null | sort -n
- # recently used
- elif [ "$1" = "--lr" ];then
-  shift
+  [ "$1" = "--r" ] && local r=r
   awk -v q="$*" -v t="$(date +%s)" -F"|" '
-   BEGIN { split(q,a," ") }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print t - $3 "\t" $1 }
-  ' $jfile 2>/dev/null | sort -nr
+   BEGIN {
+    if( substr(q,1,3) == "--r" ) {
+     split(substr(q,5),a," ")
+     f = 3
+    } else {
+     split(q,a," ")
+     f = 2
+    }
+   }
+   {
+    for( i in a ) $1 !~ a[i] && $1 = ""
+    if( $1 ) if( f == 3 ) { print t - $f "\t" $1 } else print $f "\t" $1
+   }
+  ' $jfile 2>/dev/null | sort -n$r
  # for completion
  elif [ "$1" = "--complete" -o "$2" = "--complete" ];then
-  echo [$*][$2] >> /home/rupa/aargh
   awk -v q="$2" -F"|" '
    BEGIN {
     if( substr(q,1,5) == "j --r" ) {
