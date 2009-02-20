@@ -8,11 +8,10 @@ INSTALL:
   cd around for a while
 
 USE:
-  j [--r | --l | --lr] [regex1 ... regexn]
+  j [--h[elp]] [--l] [--r] [regex1 ... regexn]
     regex1 ... regexn jump to the most used directory matching all masks
-    --r               order by recently used instead of most used
     --l               show the list instead of jumping
-    --lr              show the list, ordered by recently used
+    --r               order by recently used instead of most used
                       with no args, returns full list (same as j --l)
 
 CREDITS:

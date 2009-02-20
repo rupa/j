@@ -8,7 +8,7 @@
 #   cd around for a while
 #
 # USE:
-#   j [--h[elp]] [--l ] [--r] [regex1 ... regexn]
+#   j [--h[elp]] [--l] [--r] [regex1 ... regexn]
 #     regex1 ... regexn jump to the most used directory matching all masks
 #     --l               show the list instead of jumping
 #     --r               order by recently used instead of most used
@@ -41,7 +41,7 @@ j() {
   ' $jfile 2>/dev/null > $jfile.tmp
   mv -f $jfile.tmp $jfile
  elif [ "$1" = "--h" -o "$1" = "--help" ]; then
-  echo "j [--h] [--l ] [--r] [regex1 ... regexn]"
+  echo "j [--h] [--l] [--r] [regex1 ... regexn]"
  elif [ "$1" = "" -o "$1" = "--l" ];then
   shift
   [ "$1" = "--r" ] && local r=r
