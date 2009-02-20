@@ -39,7 +39,7 @@ j() {
      for( i in l ) print i "|" 0.9*l[i] "|" d[i] # aging
     } else for( i in l ) print i "|" l[i] "|" d[i]
    }
-  ' $jfile > $jfile.tmp
+  ' $jfile 2>/dev/null > $jfile.tmp
   mv -f $jfile.tmp $jfile
  elif [ "$1" = "" -o "$1" = "--l" ];then
   shift
