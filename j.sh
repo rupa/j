@@ -9,10 +9,11 @@
 #
 # USE:
 #   j [--h[elp]] [--r] [--l] [regex1 ... regexn]
-#     regex1 ... regexn jump to the most used directory matching all masks
-#     --r               order by recently used instead of most used
-#     --l               show the list instead of jumping
 #                       with no args, returns full list (same as j --l)
+#     regex1 ... regexn jump to the most used directory matching all masks
+#     --l               show the list instead of jumping
+#     --r               order by recently used instead of most used. (If this
+#                       option is used, it must be the first option.)
 j() {
  # change jfile if you already have a .j file for something else
  jfile=$HOME/.j
