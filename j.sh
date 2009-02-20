@@ -50,10 +50,10 @@ j() {
  # recently used
  elif [ "$1" = "--lr" ];then
   shift
-  awk -v q="$*" -F"|" '
+  awk -v q="$*" -v t="$(date +%s)" -F"|" '
    BEGIN { split(q,a," ") }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $3 "\t" $1 }
-  ' $jfile 2>/dev/null | sort -n
+   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print t - $3 "\t" $1 }
+  ' $jfile 2>/dev/null | sort -nr
  # for completion
  elif [ "$1" = "--complete" -o "$2" = "--complete" ];then
   echo [$*][$2] >> /home/rupa/aargh
