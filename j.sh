@@ -8,19 +8,19 @@
 #   cd around for a while
 #
 # USE:
-#  j [--h[elp]] [--r] [--l] [regex1 ... regexn]
-#                      with no args, returns full list (same as j --l)
-#    regex1 ... regexn jump to the most used directory matching all masks
-#    --l               show the list instead of jumping
-#    --r               order by recently used instead of most used. (If this 
-#                      option is used, it must be the first option.)
+#   j [--h[elp]] [--r] [--l] [regex1 ... regexn]
+#                       with no args, returns full list (same as j --l)
+#     regex1 ... regexn jump to the most used directory matching all masks
+#     --l               show the list instead of jumping
+#     --r               order by recently used instead of most used. (If this 
+#                       option is used, it must be the first option.)
 #
 # CREDITS:
 #   Joel Schaerer aka joelthelion for autojump
 #   Daniel Drucker aka dmd for finding bugs and making me late for lunch
 j() {
  # change jfile if you already have a .j file for something else
- jfile=$HOME/.j
+ local jfile=$HOME/.j
  if [ "$1" = "--add" ]; then
   shift
   # we're in $HOME all the time, let something else get all the good letters
@@ -70,12 +70,10 @@ j() {
   ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there (ugh, this is ugly)
  elif [[ "$*" =~ "/" ]]; then
-  x=$*
-  x=/${x#*/}
-  [ -d "$x" ] && cd "$x"
+  local x=$*; x=/${x#*/}; [ -d "$x" ] && cd "$x"
  else
   # prefer case sensitive
-  cd=$(awk -v q="$*" -F"|" '
+  local cd=$(awk -v q="$*" -F"|" '
    BEGIN { 
     if( substr(q,1,3) == "--r" ) {
      split(substr(q,5),a," ")
