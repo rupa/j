@@ -53,6 +53,7 @@ j() {
   awk -v q="$*" -v t="$(date +%s)" -v r="$r" -F"|" '
    BEGIN { f = 2; split(q,a," "); if( r ) f = 3 }
    {
+    if( system("test -d \"" $1 "\"") ) next
     for( i in a ) $1 !~ a[i] && $1 = ""
     if( $1 ) if( f == 3 ) { print t - $f "\t" $1 } else print $f "\t" $1
    }
@@ -64,9 +65,11 @@ j() {
     if( substr(q,1,5) == "j --r" ) {
      split(substr(q,7),a," ")
     } else split(substr(q,3),a," ")
-    for( i in a ) print i, a[i] >> "/home/rupa/aargh"
    }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1 }
+   { 
+    if( system("test -d \"" $1 "\"") ) next
+    for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1
+   }
   ' $jfile 2>/dev/null
  # if we hit enter on a completion just go there (ugh, this is ugly)
  elif [[ "$*" =~ "/" ]]; then
@@ -83,11 +86,15 @@ j() {
      f = 2
     }
    }
-   { for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) { print $f "\t" $1; x = 1 } }
+   { 
+    if( system("test -d \"" $1 "\"") ) next
+    for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) { print $f "\t" $1; x = 1 }
+   }
    END {
     if( x ) exit
     close(FILENAME)
     while( getline < FILENAME ) {
+     if( system("test -d \"" $1 "\"") ) continue
      for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""
      if( $1 ) print $f "\t" $1
     }
