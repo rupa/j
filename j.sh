@@ -12,8 +12,14 @@
 #                       with no args, returns full list (same as j --l)
 #     regex1 ... regexn jump to the most used directory matching all masks
 #     --l               show the list instead of jumping
-#     --r               order by recently used instead of most used. (If this 
+#     --r               order by recently used instead of most used. (If this
 #                       option is used, it must be the first option.)
+#
+# TIPS:
+#   Some handy aliases:
+#     alias jl='j --l'
+#     alias jr='j --r'
+#     alias jrl='j --r --l'
 #
 # CREDITS:
 #   Joel Schaerer aka joelthelion for autojump
@@ -71,10 +77,10 @@ j() {
     for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) print $1
    }
   ' $jfile 2>/dev/null
- # if we hit enter on a completion just go there (ugh, this is ugly)
- elif [[ "$*" =~ "/" ]]; then
-  local x=$*; x=/${x#*/}; [ -d "$x" ] && cd "$x"
  else
+  # if we hit enter on a completion just go there (ugh, this is ugly)
+  local x=$*; x=/${x#*/}
+  [ -d "$x" ] && cd "$x" && return
   # prefer case sensitive
   local cd=$(awk -v q="$*" -F"|" '
    BEGIN { 
@@ -88,7 +94,8 @@ j() {
    }
    { 
     if( system("test -d \"" $1 "\"") ) next
-    for( i in a ) $1 !~ a[i] && $1 = ""; if( $1 ) { print $f "\t" $1; x = 1 }
+    for( i in a ) $1 !~ a[i] && $1 = ""
+    if( $1 ) { print $f "\t" $1; x = 1 }
    }
    END {
     if( x ) exit
@@ -103,7 +110,7 @@ j() {
   [ "$cd" ] && cd "$cd"
  fi
 }
-# bash completions for j
+# tab completion for j
 complete -C 'j --complete "$COMP_LINE"' j
-# prepend to PROMPT_COMMAND
+# populate directory list. avoid clobbering other PROMPT_COMMANDs.
 PROMPT_COMMAND='j --add "$(pwd -P)";'"$PROMPT_COMMAND"
