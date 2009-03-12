@@ -1,4 +1,4 @@
-# maintains a jump-list of directories you actually use
+# maintains a jump-list of the directories you actually use
 # old directories eventually fall off the list
 # inspired by Joel Schaerer's http://wiki.github.com/joelthelion/autojump
 # and something similar i had - but i could never get the dir list right.
@@ -10,7 +10,7 @@
 # USE:
 #   j [--h[elp]] [--l] [--r] [--s] [regex1 ... regexn]
 #                       with no args, returns full list (same as j --l)
-#     regex1 ... regexn jump to the most used directory matching all masks
+#     regex1 ... regexn jump to the the weighted directory matching all masks
 #     --l               show the list instead of jumping
 #     --r               order by recently used instead of most used.
 #     --s               shortest matching path
@@ -28,9 +28,9 @@ j() {
  # change jfile if you already have a .j file for something else
  local jfile=$HOME/.j
  [ "$1" = "--add" ] && {
+  shift
   # we're in $HOME all the time, let something else get all the good letters
   [ "$*" = "$HOME" ] && return
-  shift
   awk -v q="$*" -v t="$(date +%s)" -F"|" '
    $2 >= 1 { 
     if( $1 == q ) {
