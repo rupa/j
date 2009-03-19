@@ -64,16 +64,20 @@ j() {
   ' $jfile 2>/dev/null
   return
  }
- local x; local out
- for x do case $x in
-  --h*) echo "j [--h[elp]] [--r] [--l] [regex1 ... regexn]"; return;;
-  --l)local list=1;;
-  --r)local recent=r;;
-  --s)local short=1;;
-    *)local out="$out $x";;
- esac; shift; done
- set -- $out
- if [ ! $1 -o "$list" ]; then
+ if [ $1 ]; then
+  local x; local out
+  for x do case $x in
+   --h*) echo "j [--h[elp]] [--r] [--l] [regex1 ... regexn]"; return;;
+   --l)local list=1;;
+   --r)local recent=r;;
+   --s)local short=1;;
+     *)local out="$out $x";;
+  esac; shift; done
+  set -- $out
+ else
+  local list=1
+ fi
+ if [ $list ]; then
   [ "$short" ] && return
   awk -v q="$*" -v t="$(date +%s)" -v r="$recent" -F"|" '
    BEGIN { f = 2; split(q,a," "); if( r ) f = 3 }
