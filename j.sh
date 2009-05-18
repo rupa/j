@@ -77,6 +77,11 @@ j() {
  else
   local list=1
  fi
+ # remove directories that no longer exist
+ awk -F"|" '
+  { if( system("test -d \"" $1 "\"") ) next; print $0 }
+ ' $jfile 2>/dev/null > $jfile.tmp
+ mv -f $jfile.tmp $jfile
  if [ $list ]; then
   [ "$short" ] && return
   awk -v q="$*" -v t="$(date +%s)" -v r="$recent" -F"|" '
