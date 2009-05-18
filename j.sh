@@ -32,19 +32,18 @@ j() {
   # we're in $HOME all the time, let something else get all the good letters
   [ "$*" = "$HOME" ] && return
   awk -v q="$*" -v t="$(date +%s)" -F"|" '
+   BEGIN { l[q] = 1; d[q] = t }
    $2 >= 1 { 
     if( $1 == q ) {
      l[$1] = $2 + 1
      d[$1] = t
-     found = 1
     } else {
      l[$1] = $2
      d[$1] = $3
-     count += $2
     }
+    count += $2
    }
    END {
-    if( !found ) l[q] = 1 && d[q] = t
     if( count > 1000 ) {
      for( i in l ) print i "|" 0.9*l[i] "|" d[i] # aging
     } else for( i in l ) print i "|" l[i] "|" d[i]
@@ -87,9 +86,10 @@ j() {
   awk -v q="$*" -v t="$(date +%s)" -v r="$recent" -F"|" '
    BEGIN { f = 2; split(q,a," "); if( r ) f = 3 }
    {
-    if( system("test -d \"" $1 "\"") ) next
     for( i in a ) $1 !~ a[i] && $1 = ""
-    if( $1 ) if( f == 3 ) { print t - $f "\t" $1 } else print $f "\t" $1
+    if( $1 ) if( f == 3 ) {
+     print t - $f "\t" $1
+    } else print $f "\t" $1
    }
   ' $jfile 2>/dev/null | sort -n$recent
  # if we hit enter on a completion just go there
@@ -100,7 +100,6 @@ j() {
   out=$(awk -v q="$*" -v s="$short" -v r="$recent" -F"|" '
    BEGIN { split(q,a," "); if( r ) { f = 3 } else f = 2 }
    { 
-    if( system("test -d \"" $1 "\"") ) next
     for( i in a ) $1 !~ a[i] && $1 = ""
     if( $1 ) {
      if( s ) {
@@ -114,7 +113,6 @@ j() {
     if( ! x ) {
      close(FILENAME)
      while( getline < FILENAME ) {
-      if( system("test -d \"" $1 "\"") ) continue
       for( i in a ) tolower($1) !~ tolower(a[i]) && $1 = ""
       if( $1 ) {
        if( s ) {
