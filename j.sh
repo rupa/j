@@ -53,7 +53,7 @@ j() {
   mv -f $jfile.tmp $jfile
   return
  }
- # tab completion
+ # for tab completion
  [ "$1" = "--complete" ] && {
   awk -v q="$2" -F"|" '
    BEGIN { split(substr(q,3),a," ") }
@@ -67,7 +67,7 @@ j() {
  if [ $1 ]; then
   local x; local out
   for x do case $x in
-   --h*) echo "j [--h[elp]] [--r] [--l] [--s] [regex1 ... regexn]"; return;;
+   --h*) echo "j [--h[elp]] [--l] [--r] [--s] [regex1 ... regexn]"; return;;
    --l)local list=1;;
    --r)local recent=r;;
    --s)local short=1;;
