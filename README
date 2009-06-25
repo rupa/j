@@ -1,6 +1,8 @@
 ** NOTE ** 
-If you like this project, check out http://github.com/rupa/j2
-a complete rethink that the author is now using
+If you like this project, check out http://gist.github.com/132429
+a complete rethink that the author is now using (only a gist for now).
+And maybe you're interested in http://github.com/rupa/j2, in which I used python to
+make it easier to experiment with.
 **********
 
 maintains a jump-list of the directories you actually use
