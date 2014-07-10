@@ -1,8 +1,10 @@
 ** NOTE **
 If you like this project, check out http://github.com/rupa/z
 a complete rethink that the author is now using.
-And maybe you're interested in http://github.com/rupa/j2, which is
-identical to z, but uses python to make experimentation somewhat easier.
+If you are a python person and interested in experimenting with stuff, 
+http://github.com/rupa/j2 is similar to z, uses python to make experimentation 
+somewhat easier (for me at least), but is not really maintained or indented for
+everyday use.
 **********
 
 maintains a jump-list of the directories you actually use
